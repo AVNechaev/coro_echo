@@ -1,0 +1,24 @@
+[submodule "third_party/boost/asio"]
+	path = third_party/boost/asio
+	url = https://github.com/boostorg/asio.git
+[submodule "third_party/boost/config"]
+	path = third_party/boost/config
+	url = https://github.com/boostorg/config.git
+[submodule "third_party/boost/system"]
+	path = third_party/boost/system
+	url = https://github.com/boostorg/system.git
+[submodule "third_party/boost/assert"]
+	path = third_party/boost/assert
+	url = https://github.com/boostorg/assert.git
+[submodule "third_party/boost/core"]
+	path = third_party/boost/core
+	url = https://github.com/boostorg/core.git
+[submodule "third_party/boost/throw_exception"]
+	path = third_party/boost/throw_exception
+	url = https://github.com/boostorg/throw_exception.git
+[submodule "third_party/boost/variant2"]
+	path = third_party/boost/variant2
+	url = https://github.com/boostorg/variant2.git
+[submodule "third_party/boost/mp11"]
+	path = third_party/boost/mp11
+	url = https://github.com/boostorg/mp11.git
