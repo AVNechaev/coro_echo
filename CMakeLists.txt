@@ -40,7 +40,12 @@ set(BOOST_SUBMODULE_DIRS
 )
 
 # ── Executable ───────────────────────────────────────────────────────────────
-add_executable(${PROJECT_NAME} src/main.cpp)
+add_executable(${PROJECT_NAME}
+    src/main.cpp
+    src/boost_echo.cpp
+    src/posix_echo.cpp
+    src/posix_echo_server.cpp
+)
 
 foreach(dir IN LISTS BOOST_SUBMODULE_DIRS)
     target_include_directories(${PROJECT_NAME} PRIVATE
