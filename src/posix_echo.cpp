@@ -1,6 +1,7 @@
 #include "posix_echo.h"
 
 #include <arpa/inet.h>
+#include <array>
 #include <fcntl.h>
 #include <netinet/in.h>
 #include <sys/epoll.h>
@@ -13,13 +14,15 @@
 
 namespace posix_echo {
 
-// ── helpers ──────────────────────────────────────────────────────────────────
+namespace {
 
 static void throw_errno(const char *msg) {
   throw std::system_error(errno, std::generic_category(), msg);
 }
 
 thread_local io_context *tl_ctx = nullptr;
+
+} // namespace
 
 // ── io_context ───────────────────────────────────────────────────────────────
 
@@ -41,7 +44,7 @@ void io_context::watch(int fd, uint32_t events, std::coroutine_handle<> h) {
 void io_context::run() {
   tl_ctx = this; // set once; all coroutines running here share this context
 
-  epoll_event evs[64];
+  std::array<epoll_event, 64> evs;
   for (;;) {
     while (!ready_.empty()) {
       auto h = ready_.front();
@@ -51,7 +54,8 @@ void io_context::run() {
     }
 
     // Block indefinitely when idle; poll without blocking when work is pending.
-    int n = ::epoll_wait(epfd_, evs, 64, ready_.empty() ? -1 : 0);
+    int n =
+        ::epoll_wait(epfd_, evs.data(), evs.size(), ready_.empty() ? -1 : 0);
     if (n < 0 && errno == EINTR)
       continue;
     for (int i = 0; i < n; ++i)
@@ -219,7 +223,7 @@ void co_spawn(io_context &ctx, task<void> t, detached_t) {
 // ── operator&& ───────────────────────────────────────────────────────────────
 
 and_awaitable operator&&(task<void> l, task<void> r) {
-  return {std::move(l), std::move(r)};
+  return {.left = std::move(l), .right = std::move(r)};
 }
 
 static task<void> and_tasks(task<void> left, task<void> right) {

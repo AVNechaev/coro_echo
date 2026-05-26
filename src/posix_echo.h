@@ -32,8 +32,9 @@ struct promise_base {
     template <typename P>
     std::coroutine_handle<> await_suspend(std::coroutine_handle<P> h) noexcept {
       auto &p = h.promise();
-      if (p.cont)
+      if (p.cont) {
         return p.cont; // owned: resume caller
+      }
       h.destroy();     // detached: no owner, self-destruct
       return std::noop_coroutine();
     }
