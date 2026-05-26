@@ -66,7 +66,7 @@ void io_context::run() {
 // ── this_coro::executor ──────────────────────────────────────────────────────
 
 this_coro::executor_awaiter operator co_await(this_coro::executor_t) noexcept {
-  return {tl_ctx};
+  return {.ctx = tl_ctx};
 }
 
 // ── tcp::socket
@@ -113,7 +113,7 @@ task<std::size_t> socket::async_read_some(char *buf, std::size_t buf_size) {
           std::make_error_code(std::errc::connection_reset));
     if (errno != EWOULDBLOCK)
       throw_errno("recv");
-    co_await fd_awaiter{ctx_, fd_, EPOLLIN};
+    co_await fd_awaiter{.ctx = ctx_, .fd = fd_, .events = EPOLLIN};
   }
 }
 
@@ -126,7 +126,7 @@ task<void> socket::async_write(const char *buf, std::size_t n) {
     }
     if (errno != EWOULDBLOCK)
       throw_errno("send");
-    co_await fd_awaiter{ctx_, fd_, EPOLLOUT};
+    co_await fd_awaiter{.ctx = ctx_, .fd = fd_, .events = EPOLLOUT};
   }
 }
 
@@ -160,7 +160,7 @@ task<socket> acceptor::async_accept() {
       co_return socket{ctx_, cfd};
     if (errno != EWOULDBLOCK)
       throw_errno("accept4");
-    co_await fd_awaiter{ctx_, fd_, EPOLLIN};
+    co_await fd_awaiter{.ctx = ctx_, .fd = fd_, .events = EPOLLIN};
   }
 }
 
