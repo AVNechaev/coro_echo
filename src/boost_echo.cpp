@@ -11,11 +11,6 @@ using namespace boost::asio::experimental::awaitable_operators;
 using time_point = std::chrono::steady_clock::time_point;
 using ip::tcp;
 
-awaitable<void> echo(tcp::socket& sock, time_point& deadline);
-awaitable<void> watchdog(time_point& deadline);
-awaitable<void> handle_connection(tcp::socket sock);
-awaitable<void> listen(tcp::acceptor& acceptor);
-
 awaitable<void> echo(tcp::socket& sock, time_point& deadline)
 {
     char data[4096];
